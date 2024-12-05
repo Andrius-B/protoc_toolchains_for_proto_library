@@ -1,0 +1,35 @@
+bazel_dep(name = "protobuf", version = "29.1", repo_name = "com_google_protobuf")
+bazel_dep(name = "toolchains_protoc", version = "0.3.4")
+
+# Optional: choose a version of protoc rather than the latest.
+protoc = use_extension("@toolchains_protoc//protoc:extensions.bzl", "protoc")
+protoc.toolchain(
+    # Creates a repository to satisfy well-known-types dependencies such as
+    # deps=["@com_google_protobuf//:any_proto"]
+    # google_protobuf = "com_google_protobuf",
+    # Pin to any version of protoc
+    version = "v26.0",
+)
+use_repo(protoc, "toolchains_protoc_hub")
+
+register_toolchains("@toolchains_protoc_hub//:all")
+
+# if this is removed, `bazel build src` will rebuild the toolchains
+# if these toolchains are registered, the prebuilt protoctoolchain will be used for building proto files!
+# here are the snippets from toolchain resolution:
+# without these legacy toolchains, protoc will be built from source:
+# ```
+# INFO: ToolchainResolution: Performing resolution of @@protobuf~//bazel/private:proto_toolchain_type for target platform @@platforms//host:host
+#      ToolchainResolution:   Toolchain @@protobuf~//bazel/private/toolchains:protoc_sources is compatible with target plaform, searching for execution platforms:
+#      ToolchainResolution:     Compatible execution platform @@platforms//host:host
+# ```
+# with these legacy toolchains, protoc will be used from prebuilt binaries:
+# ```
+# INFO: ToolchainResolution: Performing resolution of @@protobuf~//bazel/private:proto_toolchain_type for target platform @@platforms//host:host
+#       ToolchainResolution:   Toolchain @@toolchains_protoc~~protoc~toolchains_protoc_hub.linux_x86_64//:prebuilt_protoc_toolchain is compatible with target plaform, searching for execution platforms:
+#       ToolchainResolution:     Incompatible execution platform @@platforms//host:host; mismatching values: linux, x86_64
+#       ToolchainResolution:   Toolchain @@toolchains_protoc~~protoc~toolchains_protoc_hub.osx_aarch_64//:prebuilt_protoc_toolchain is compatible with target plaform, searching for execution platforms:
+#       ToolchainResolution:     Compatible execution platform @@platforms//host:host
+#       ToolchainResolution:   All execution platforms have been assigned a @@protobuf~//bazel/private:proto_toolchain_type toolchain, stopping
+# ```
+register_toolchains("//legacy_toolchains:all")

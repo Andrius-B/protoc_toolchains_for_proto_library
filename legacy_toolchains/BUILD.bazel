@@ -1,0 +1,29 @@
+toolchain(
+    name = "prebuilt_protoc_toolchain_osx_aarch_64",
+    exec_compatible_with = [
+        "@platforms//os:macos",
+        "@platforms//cpu:aarch64",
+    ],
+    toolchain = "@@toolchains_protoc~~protoc~toolchains_protoc_hub.osx_aarch_64//:prebuilt_protoc_toolchain",
+    toolchain_type = "@com_google_protobuf//bazel/private:proto_toolchain_type",
+)
+
+toolchain(
+    name = "prebuilt_protoc_toolchain_osx_x86_64",
+    exec_compatible_with = [
+        "@platforms//os:macos",
+        "@platforms//cpu:x86_64",
+    ],
+    toolchain = "@@toolchains_protoc~~protoc~toolchains_protoc_hub.osx_x86_64//:prebuilt_protoc_toolchain",
+    toolchain_type = "@com_google_protobuf//bazel/private:proto_toolchain_type",
+)
+
+toolchain(
+    name = "prebuilt_protoc_toolchain_linux_x86_64",
+    exec_compatible_with = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+    ],
+    toolchain = "@@toolchains_protoc~~protoc~toolchains_protoc_hub.linux_x86_64//:prebuilt_protoc_toolchain",
+    toolchain_type = "@com_google_protobuf//bazel/private:proto_toolchain_type",
+)
